@@ -16,37 +16,49 @@ class QuestionsView extends StatefulWidget {
       svgPicture: SvgPicture.asset(Assets.imagesQ1),
       question:
       'How would you describe your level of satisfaction with the healthcare system?',
-      option1: 'Strongly Satisfied',
-      option2: 'Satisfied',
-      option3: 'Neutral',
-      option4: 'Not Satisfied',
+      options: [
+        'Strongly Satisfied',
+        'Satisfied',
+        'Neutral',
+        'Not Satisfied',
+      ],
+      correctAnswer: 'Strongly Satisfied',
     ),
     QuestionModel(
       questionNumber: 'Question 2',
       svgPicture: SvgPicture.asset(Assets.imagesQ2),
       question: 'What vitamins do you take?',
-      option1: 'Vitamin D3',
-      option2: 'Vitamin B',
-      option3: 'Zinc',
-      option4: 'Magnesium',
+      options: [
+        'Vitamin D3',
+        'Vitamin B',
+        'Zinc',
+        'Magnesium',
+      ],
+      correctAnswer: 'Zinc',
     ),
     QuestionModel(
       questionNumber: 'Question 3',
       svgPicture: SvgPicture.asset(Assets.imagesQ3),
       question: 'How often do you engage in physical activity during the week?',
-      option1: 'Daily',
-      option2: '3-4 times',
-      option3: '1-2 times',
-      option4: 'Rarely',
+      options: [
+        'Daily',
+        '3-4 times',
+        '1-2 times',
+        'Rarely',
+      ],
+      correctAnswer: '3-4 times',
     ),
     QuestionModel(
       questionNumber: 'Question 4',
       svgPicture: SvgPicture.asset(Assets.imagesQ4),
       question: 'How would you rate your current sleep quality?',
-      option1: 'Excellent',
-      option2: 'Good',
-      option3: 'Fair',
-      option4: 'Poor',
+      options: [
+        'Excellent',
+        'Good',
+        'Fair',
+        'Poor',
+      ],
+      correctAnswer: 'Good',
     ),
   ];
 
@@ -68,10 +80,10 @@ class _QuestionsViewState extends State<QuestionsView> {
   Widget build(BuildContext context) {
     final question = widget.questions[currentIndex];
     final options = [
-      question.option1,
-      question.option2,
-      question.option3,
-      question.option4,
+      question.options[0],
+      question.options[1],
+      question.options[2],
+      question.options[3],
     ];
 
     final selectedIndex = selectedAnswers[currentIndex];
