@@ -6,6 +6,7 @@ import 'package:quiz_app/styles/app_text_styles.dart';
 import 'package:quiz_app/widgets/custom_back_button.dart';
 import 'package:quiz_app/widgets/custom_next_button.dart';
 import '../generated/assets.dart';
+import '../widgets/custom_list_generate.dart';
 
 class QuestionsView extends StatefulWidget {
   QuestionsView({super.key});
@@ -79,12 +80,7 @@ class _QuestionsViewState extends State<QuestionsView> {
   @override
   Widget build(BuildContext context) {
     final question = widget.questions[currentIndex];
-    final options = [
-      question.options[0],
-      question.options[1],
-      question.options[2],
-      question.options[3],
-    ];
+    final options = question.options;
 
     final selectedIndex = selectedAnswers[currentIndex];
 
@@ -129,73 +125,21 @@ class _QuestionsViewState extends State<QuestionsView> {
                     ),
                   ),
                   const SizedBox(height: 25),
-                  Text(question.question, style: AppTextStyles.medium24()),
+                  Padding(
+                    padding: const EdgeInsetsDirectional.only(end: 20),
+                    child: Text(question.question, style: AppTextStyles.medium24()),
+                  ),
                   const SizedBox(height: 40),
-                  ...List.generate(options.length, (index) {
-                    final isSelected = selectedIndex == index;
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedAnswers[currentIndex] = index;
-                          });
-                        },
-                        child: Container(
-                          width: MediaQuery.sizeOf(context).width,
-                          padding: const EdgeInsets.all(15),
-                          decoration: ShapeDecoration(
-                            color: isSelected
-                                ? const Color(0xFFB8B2FF)
-                                : Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              side: BorderSide(
-                                color: isSelected
-                                    ? const Color(0xFF2B0062)
-                                    : Colors.transparent,
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 19,
-                                height: 19,
-                                decoration: ShapeDecoration(
-                                  color: isSelected
-                                      ? const Color(0xFF2B0062)
-                                      : Colors.transparent,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(9.5),
-                                    side: const BorderSide(
-                                      color: Color(0xFF2B0062),
-                                      width: 1,
-                                    ),
-                                  ),
-                                ),
-                                child: isSelected
-                                    ? const Icon(
-                                  Icons.check,
-                                  size: 13,
-                                  color: Colors.white,
-                                )
-                                    : null,
-                              ),
-                              const SizedBox(width: 16),
-                              Text(
-                                options[index],
-                                style: AppTextStyles.regular16(
-                                  color: const Color(0xFF2B0062),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
+                  CustomListGenerate(
+                    options: options,
+                    selectedIndex: selectedIndex,
+                    correctAnswer: question.correctAnswer,
+                    onOptionSelected: (index) {
+                      setState(() {
+                        selectedAnswers[currentIndex] = index;
+                      });
+                    },
+                  ),
                   const Spacer(),
                   Row(
                     children: [
