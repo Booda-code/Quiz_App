@@ -68,22 +68,26 @@ class QuestionsView extends StatefulWidget {
 }
 
 class _QuestionsViewState extends State<QuestionsView> {
-  int currentIndex = 0;
+  late PageController _pageController;
+
   late List<int?> selectedAnswers;
 
   @override
   void initState() {
     super.initState();
+    _pageController = PageController();
     selectedAnswers = List<int?>.filled(widget.questions.length, null);
+  }
+
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final question = widget.questions[currentIndex];
-    final options = question.options;
-
-    final selectedIndex = selectedAnswers[currentIndex];
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.primaryColor,
@@ -94,81 +98,78 @@ class _QuestionsViewState extends State<QuestionsView> {
         child: Stack(
           children: [
             Image.asset(Assets.imagesGradient),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 40),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: ShapeDecoration(
-                      color: const Color(0xFF8D83FF),
-                      shape: RoundedRectangleBorder(
-                        side: const BorderSide(
-                          width: 1,
-                          color: Color(0xFFB8B2FF),
-                        ),
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        question.svgPicture,
-                        const SizedBox(width: 8),
-                        Text(
-                          question.questionNumber,
-                          style: AppTextStyles.regular16(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 25),
-                  Padding(
-                    padding: const EdgeInsetsDirectional.only(end: 20),
-                    child: Text(question.question, style: AppTextStyles.medium24()),
-                  ),
-                  const SizedBox(height: 40),
-                  CustomListGenerate(
-                    options: options,
-                    selectedIndex: selectedIndex,
-                    correctAnswer: question.correctAnswer,
-                    onOptionSelected: (index) {
-                      setState(() {
-                        selectedAnswers[currentIndex] = index;
-                      });
-                    },
-                  ),
-                  const Spacer(),
-                  Row(
+            PageView.builder(
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: widget.questions.length,
+              itemBuilder: (context, index) {
+                final question = widget.questions[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Visibility(
-                        visible: currentIndex > 0,
-                        child: CustomBackButton(
-                          onPressed: () {
-                            if (currentIndex > 0) {
-                              setState(() {
-                                currentIndex--;
-                              });
-                            }
-                          },
+                      const SizedBox(height: 40),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: ShapeDecoration(
+                          color: const Color(0xFF8D83FF),
+                          shape: RoundedRectangleBorder(
+                            side: const BorderSide(width: 1, color: Color(0xFFB8B2FF)),
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            question.svgPicture,
+                            const SizedBox(width: 8),
+                            Text(
+                              question.questionNumber,
+                              style: AppTextStyles.regular16(color: Colors.white),
+                            ),
+                          ],
                         ),
                       ),
+                      const SizedBox(height: 25),
+                      Padding(
+                        padding: const EdgeInsetsDirectional.only(end: 20),
+                        child: Text(question.question, style: AppTextStyles.medium24()),
+                      ),
+                      const SizedBox(height: 40),
+                    CustomListGenerate(
+                      options: question.options,
+                      selectedIndex: selectedAnswers[index],
+                      onOptionSelected: (selected) {
+                        setState(() {
+                          selectedAnswers[index] = selected;
+                        });
+                      },
+                    ),
                       const Spacer(),
-                      CustomNextButton(
-                        onPressed: () {
-                          if (currentIndex < widget.questions.length - 1) {
-                            setState(() {
-                              currentIndex++;
-                            });
-                          }
-                        },
+                      Row(
+                        children: [
+                          if (index > 0)
+                            CustomBackButton(
+                              onPressed: () => _pageController.previousPage(
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              ),
+                            ),
+                          const Spacer(),
+                          if (index < widget.questions.length - 1)
+                            CustomNextButton(
+                              onPressed: () => _pageController.nextPage(
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              ),
+                            ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
+                );
+              },
             ),
           ],
         ),
